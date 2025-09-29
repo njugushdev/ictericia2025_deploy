@@ -1,0 +1,11 @@
+imagen,etiqueta_real,prediccion,probabilidad,acierto
+0183-1.jpg,no_ictericia,no_ictericia,0.75,✔️
+0542-3.jpg,no_ictericia,no_ictericia,0.92,✔️
+0736-2.jpg,no_ictericia,ictericia,0.85,❌
+0901-1.jpg,ictericia,no_ictericia,0.96,❌
+0541-3.jpg,ictericia,ictericia,0.94,✔️
+0484-3.jpg,ictericia,ictericia,0.73,✔️
+1279-1.jpg,no_ictericia,ictericia,0.7,❌
+0214-3.jpg,ictericia,ictericia,1.0,✔️
+0149-1.jpg,ictericia,no_ictericia,0.76,❌
+1235-1.jpg,no_ictericia,no_ictericia,0.87,✔️
