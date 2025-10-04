@@ -1,6 +1,13 @@
-# ---- Carpetas locales de entorno ----
+# ---- Configuración local de IDE ----
 .idea/
+.vscode/
+
+# ---- Entornos virtuales ----
 .venv/
+env/
+venv/
+
+# ---- Archivos compilados / caché ----
 __pycache__/
 *.pyc
 *.pyo
@@ -8,6 +15,8 @@ __pycache__/
 
 # ---- Archivos temporales / logs ----
 *.log
+*.tmp
+*.bask
 .DS_Store
 Thumbs.db
 
@@ -15,3 +24,27 @@ Thumbs.db
 resultados/
 exports/
 data/processed/
+test/__pycache__/
+core/__pycache__/
+pages/__pycache__/
+models_ml/__pycache__/
+utils/__pycache__/
+
+# ---- Archivos sensibles / de entorno ----
+.env
+.env.*
+*.key
+*.json
+*.pkl
+*.pt
+*.h5
+*.joblib
+
+# ---- Archivos de depuración o caché ----
+*.sqlite3
+*.db
+__cache__/
+
+# ---- Archivos del sistema ----
+*.swp
+*.swo
