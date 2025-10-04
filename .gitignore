@@ -1,0 +1,17 @@
+# ---- Carpetas locales de entorno ----
+.idea/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# ---- Archivos temporales / logs ----
+*.log
+.DS_Store
+Thumbs.db
+
+# ---- Datos generados ----
+resultados/
+exports/
+data/processed/
