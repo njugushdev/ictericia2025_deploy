@@ -3,7 +3,7 @@
 > Proyecto de tesis: *“Sistema de diagnóstico no invasivo de ictericia neonatal en Colombia: un enfoque desde la visión por computador”*.
 > Este README se centra en **cómo está organizado el proyecto**, **qué hace cada parte** y **cómo ejecutarlo** end-to-end.
 
----
+
 ## 🧭 Tabla de contenidos
 - [1. Estructura del proyecto (vista rápida)](#1-estructura-del-proyecto-vista-rápida)
 - [2. Estructura explicada (para qué sirve cada parte)](#2-estructura-explicada-para-qué-sirve-cada-parte)
@@ -134,6 +134,7 @@ scikit-learn==1.5.1
 matplotlib==3.9.2
 plotly==5.24.1
 python-dotenv==1.0.1
+tensorflow==2.20.0
 ```
 
 > Estas versiones son estables al momento de preparar la interfaz y cubren:  

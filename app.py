@@ -1,11 +1,13 @@
 import streamlit as st
 
 st.set_page_config(
-    page_title = "Sistema de Ictericia Neonatal",
-    page_icon = "🩺",
-    layout = "wide"
+    page_title="Sistema de Diagnóstico de Ictericia Neonatal",
+    page_icon="🩺",
+    layout="wide"
 )
 
-st.title("🩺 Bienvenido al sistema de Diagnóstico")
-st.markdown("Estimado usuario: utilice el menú lateral para navegar entre módulos. "
-            "Recuerde que debe loguearse primero para poder acceder a los demás módulos")
+st.title("🩺 Bienvenido al Sistema de Diagnóstico")
+st.markdown(
+    "Estimado usuario: use el menú lateral para navegar entre los módulos. "
+    "Recuerde que debe *iniciar sesión primero* para poder acceder a los demás módulos."
+)

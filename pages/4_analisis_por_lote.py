@@ -6,67 +6,79 @@ from datetime import datetime
 from PIL import Image
 from utils.layout_utils import verificar_autenticacion
 from core.database import cargar_dataset_desde_csv
-from core.processor import predecir_con_modelo_falso, mostrar_imagen_con_prediccion
+from core.processor import predict_image, mostrar_imagen_con_prediccion
 
+# ============================================================
+# Configuración de la página
+# ============================================================
 st.set_page_config(
-    page_title = "Análisis por Lote",
-    page_icon = "🧪",
-    layout = "wide"
+    page_title="Análisis por Lotes - Ictericia Neonatal",
+    page_icon="🧪",
+    layout="wide"
 )
 
 verificar_autenticacion()
+st.title("🧪 Análisis por Lotes - Detección de Ictericia Neonatal")
 
-st.title("🧪 Análisis simulado por Lote")
-
-# Cargar dataset real (CSV + imágenes)
+# ============================================================
+# Cargar dataset (CSV + imágenes)
+# ============================================================
 df = cargar_dataset_desde_csv(
-    ruta_csv="NeoJaundice/chd_jaundice_published_2.csv",
-    ruta_imagenes="NeoJaundice/images"
+    ruta_csv="C:/Users/PC/ML PROJECTS/Neojaundice/NeoJaundice/chd_jaundice_published_2.csv",
+    ruta_imagenes="C:/Users/PC/ML PROJECTS/Neojaundice/NeoJaundice/images"
 )
 
-# Sliders de control
-cantidad = st.slider("Cantidad de imágenes a analizar", min_value=1, max_value=200, value=10)
+# Controles
+cantidad = st.slider("Número de imágenes a analizar", min_value=1, max_value=200, value=10)
 mostrar = st.slider("Imágenes a mostrar en pantalla", min_value=1, max_value=min(cantidad, 20), value=5)
 
-#Inicializar resultados
+# Contadores
 aciertos = 0
 conteo_ictericia = 0
 conteo_no_ictericia = 0
 filas = []
 
-# Bucle principal de análisis
+# ============================================================
+# Bucle principal de análisis por lote
+# ============================================================
 for i in range(cantidad):
     fila = df.iloc[i]
-    imagen = Image.open(fila["ruta"])
-    pred, prob = predecir_con_modelo_falso(imagen)
+    image = Image.open(fila["ruta"])
 
-    if pred == "ictericia":
+    # Predicción con los modelos reales
+    pred_label, prob, bilirubin_val = predict_image(image)
+
+    if pred_label == "ictericia":
         conteo_ictericia += 1
     else:
         conteo_no_ictericia += 1
-    match = pred == fila["etiqueta"]
+
+    match = pred_label == fila["etiqueta"]
     if match:
         aciertos += 1
 
-    #Exportar fila
+    # Guardar fila de resultados
     filas.append([
         os.path.basename(fila["ruta"]),
         fila["etiqueta"],
-        pred,
+        pred_label,
         prob,
+        bilirubin_val,
         "✔️" if match else "❌",
     ])
 
-    # Mostrar imagen en pantalla (solo algunas)
+    # Mostrar imágenes de ejemplo
     if i < mostrar:
-        mostrar_imagen_con_prediccion(fila, pred, prob, st)
+        mostrar_imagen_con_prediccion(fila, pred_label, prob, bilirubin_val, st)
 
-# Exportar resultados
+# ============================================================
+# Guardar resultados
+# ============================================================
 os.makedirs("resultados", exist_ok=True)
 timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
 archivo_lote = f"resultados/lote_{timestamp}.csv"
 archivo_maestro = "resultados/todos_lotes.csv"
-columnas = ["imagen", "etiqueta_real", "prediccion", "probabilidad", "acierto"]
+columnas = ["imagen", "etiqueta_real", "prediccion", "probabilidad", "bilirrubina_predicha", "acierto"]
 
 # Guardar CSV del lote
 with open(archivo_lote, "w", newline="", encoding="utf-8") as f_lote:
@@ -74,23 +86,27 @@ with open(archivo_lote, "w", newline="", encoding="utf-8") as f_lote:
     writer.writerow(columnas)
     writer.writerows(filas)
 
-# Mostrar resultados del lote
+# ============================================================
+# Resumen de resultados
+# ============================================================
 st.markdown("---")
-st.subheader("📈 Resultado de lote analizado")
+st.subheader("📈 Resumen de Resultados del Lote")
+
 col1, col2, col3 = st.columns(3)
-col1.metric("Total imágenes", cantidad)
-col2.metric("Aciertos", aciertos)
-col3.metric("Exactitud simulada", f"{(aciertos / cantidad) * 100:.2f}%")
+col1.metric("Total de imágenes", cantidad)
+col2.metric("Predicciones correctas", aciertos)
+col3.metric("Exactitud", f"{(aciertos / cantidad) * 100:.2f}%")
 
-# Conteo por clase
-st.markdown("### 🔍 Predicciones realizadas")
-st.markdown(f"- 🟡 Ictericia: '{conteo_ictericia}' imágenes")
-st.markdown(f"- ⚪ No Ictericia: '{conteo_no_ictericia}' imágenes")
+# Conteo de clases
+st.markdown("### 🔍 Conteo de clases predichas")
+st.markdown(f"- 🟡 Ictericia: {conteo_ictericia} imágenes")
+st.markdown(f"- ⚪ No Ictericia: {conteo_no_ictericia} imágenes")
 
-# Gráfico
+# Gráfico de barras
 df_pred = pd.DataFrame({
     "Clase": ["ictericia", "no_ictericia"],
     "Cantidad": [conteo_ictericia, conteo_no_ictericia]
-})
-st.markdown("### 📊 Distribución de clases predichas")
-st.bar_chart(df_pred["Clase"])
+}).set_index("Clase")
+st.bar_chart(df_pred)
+
+st.success(f"✅ Resultados guardados en: {archivo_lote}")
