@@ -2,6 +2,24 @@
 Funciones del procesador para la predicción de ictericia neonatal.
 Integra los modelos CNN de clasificación y regresión.
 """
+import gdown, os
+
+def ensure_models():
+    os.makedirs("models_ml", exist_ok=True)
+    
+    files = {
+        "models_ml/strong_cnn_with_mask_jaundice.h5": "1EbQp7GJPFcDyqF2hSM4rOAmqcTHWs3dN",
+        "models_ml/cnn_regression_model_improved.h5": "1B26t7LvgcNp99Nv-9riqVABuUqLzB3g2"
+    }
+
+    for path, file_id in files.items():
+        if not os.path.exists(path):
+            url = f"https://drive.google.com/uc?id={file_id}"
+            print(f"⬇️ Downloading {os.path.basename(path)} ...")
+            gdown.download(url, path, quiet=False)
+
+# Call this before loading models
+ensure_models()
 
 import os
 import tensorflow as tf
