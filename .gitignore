@@ -1,50 +1,20 @@
-# ---- Configuración local de IDE ----
-.idea/
-.vscode/
-
-# ---- Entornos virtuales ----
-.venv/
-env/
-venv/
-
-# ---- Archivos compilados / caché ----
-__pycache__/
+# Python
+_pycache_/
 *.pyc
-*.pyo
-*.pyd
 
-# ---- Archivos temporales / logs ----
-*.log
-*.tmp
-*.bask
-.DS_Store
-Thumbs.db
+# Virtual environments
+venv/
+.env/
 
-# ---- Datos generados ----
+# Results and local outputs
 resultados/
-exports/
-data/processed/
-test/__pycache__/
-core/__pycache__/
-pages/__pycache__/
-models_ml/__pycache__/
-utils/__pycache__/
+*.csv
 
-# ---- Archivos sensibles / de entorno ----
-.env
-.env.*
-*.key
-*.json
-*.pkl
-*.pt
-*.h5
-*.joblib
+# Build artifacts
+build/
+dist/
+*.spec
 
-# ---- Archivos de depuración o caché ----
-*.sqlite3
-*.db
-__cache__/
-
-# ---- Archivos del sistema ----
-*.swp
-*.swo
+# IDE files
+.vscode/
+.idea/
