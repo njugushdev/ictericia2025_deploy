@@ -1,11 +1,11 @@
 import sys, os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(_file_), "..")))
 
 import streamlit as st
 import pandas as pd
 import os
 import csv
+import gdown
 from datetime import datetime
 from PIL import Image
 from utils.layout_utils import verificar_autenticacion
@@ -25,14 +25,36 @@ verificar_autenticacion()
 st.title("🧪 Análisis por Lotes - Detección de Ictericia Neonatal")
 
 # ============================================================
+# Descarga automática del dataset si no existe
+# ============================================================
+os.makedirs("data", exist_ok=True)
+ruta_csv = "data/chd_jaundice_published_2.csv"
+ruta_imagenes = "data/images"
+
+# Google Drive file ID (from your link)
+file_id = "1LbW-ZuxMHMk04Sk8rE3EwIuACz5QoZvy"
+gdrive_url = f"https://drive.google.com/uc?id={file_id}"
+
+if not os.path.exists(ruta_csv):
+    with st.spinner("📥 Descargando dataset desde Google Drive..."):
+        gdown.download(gdrive_url, ruta_csv, quiet=False)
+        st.success("✅ Dataset descargado correctamente.")
+
+# ============================================================
 # Cargar dataset (CSV + imágenes)
 # ============================================================
-df = cargar_dataset_desde_csv(
-    ruta_csv="C:/Users/PC/ML PROJECTS/Neojaundice/NeoJaundice/chd_jaundice_published_2.csv",
-    ruta_imagenes="C:/Users/PC/ML PROJECTS/Neojaundice/NeoJaundice/images"
-)
+try:
+    df = cargar_dataset_desde_csv(
+        ruta_csv=ruta_csv,
+        ruta_imagenes=ruta_imagenes
+    )
+except Exception as e:
+    st.error(f"❌ Error al cargar el dataset: {e}")
+    st.stop()
 
-# Controles
+# ============================================================
+# Controles de usuario
+# ============================================================
 cantidad = st.slider("Número de imágenes a analizar", min_value=1, max_value=200, value=10)
 mostrar = st.slider("Imágenes a mostrar en pantalla", min_value=1, max_value=min(cantidad, 20), value=5)
 
