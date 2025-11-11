@@ -51,7 +51,7 @@ uploaded_image = st.file_uploader("📷 Subir imagen del neonato", type=["jpg", 
 
 if uploaded_image:
     image = Image.open(uploaded_image).convert("RGB")
-    st.image(image, caption="Imagen cargada", use_container_width=True)
+    st.image(image, caption="Imagen cargada", use_column_width=True)
 
     if st.button("📊 Analizar imagen"):
         with st.spinner("Ejecutando análisis con IA..."):
