@@ -88,7 +88,7 @@ def mostrar_imagen_con_prediccion(fila, pred_label, prob, bilirubin_val, st):
     col1, col2 = st.columns([1, 2])
 
     with col1:
-        st.image(imagen, caption=os.path.basename(fila["ruta"]), use_container_width=True)
+        st.image(imagen, caption=os.path.basename(fila["ruta"]))
 
     with col2:
         st.markdown(f"*Etiqueta real:* {fila['etiqueta']}")
