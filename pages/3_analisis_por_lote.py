@@ -8,7 +8,6 @@ import csv
 import gdown
 from datetime import datetime
 from PIL import Image
-from utils.layout_utils import verificar_autenticacion
 from core.database import cargar_dataset_desde_csv
 from core.processor import predict_image, mostrar_imagen_con_prediccion
 
@@ -21,7 +20,6 @@ st.set_page_config(
     layout="wide"
 )
 
-verificar_autenticacion()
 st.title("🧪 Análisis por Lotes - Detección de Ictericia Neonatal")
 
 # ============================================================
@@ -31,7 +29,6 @@ os.makedirs("data", exist_ok=True)
 ruta_csv = "data/chd_jaundice_published_2.csv"
 ruta_imagenes = "data/images"
 
-# Google Drive file ID (from your link)
 file_id = "1LbW-ZuxMHMk04Sk8rE3EwIuACz5QoZvy"
 gdrive_url = f"https://drive.google.com/uc?id={file_id}"
 
@@ -71,7 +68,6 @@ for i in range(cantidad):
     fila = df.iloc[i]
     image = Image.open(fila["ruta"])
 
-    # Predicción con los modelos reales
     pred_label, prob, bilirubin_val = predict_image(image)
 
     if pred_label == "ictericia":
@@ -83,7 +79,6 @@ for i in range(cantidad):
     if match:
         aciertos += 1
 
-    # Guardar fila de resultados
     filas.append([
         os.path.basename(fila["ruta"]),
         fila["etiqueta"],
@@ -93,7 +88,6 @@ for i in range(cantidad):
         "✔️" if match else "❌",
     ])
 
-    # Mostrar imágenes de ejemplo
     if i < mostrar:
         mostrar_imagen_con_prediccion(fila, pred_label, prob, bilirubin_val, st)
 
@@ -113,6 +107,18 @@ with open(archivo_lote, "w", newline="", encoding="utf-8") as f_lote:
     writer.writerows(filas)
 
 # ============================================================
+# Guardar en el archivo acumulado
+# ============================================================
+if not os.path.exists(archivo_maestro):
+    with open(archivo_maestro, "w", newline="", encoding="utf-8") as f_master:
+        writer = csv.writer(f_master)
+        writer.writerow(columnas)
+
+with open(archivo_maestro, "a", newline="", encoding="utf-8") as f_master:
+    writer = csv.writer(f_master)
+    writer.writerows(filas)
+
+# ============================================================
 # Resumen de resultados
 # ============================================================
 st.markdown("---")
@@ -123,12 +129,10 @@ col1.metric("Total de imágenes", cantidad)
 col2.metric("Predicciones correctas", aciertos)
 col3.metric("Exactitud", f"{(aciertos / cantidad) * 100:.2f}%")
 
-# Conteo de clases
 st.markdown("### 🔍 Conteo de clases predichas")
 st.markdown(f"- 🟡 Ictericia: {conteo_ictericia} imágenes")
 st.markdown(f"- ⚪ No Ictericia: {conteo_no_ictericia} imágenes")
 
-# Gráfico de barras
 df_pred = pd.DataFrame({
     "Clase": ["ictericia", "no_ictericia"],
     "Cantidad": [conteo_ictericia, conteo_no_ictericia]
@@ -136,3 +140,27 @@ df_pred = pd.DataFrame({
 st.bar_chart(df_pred)
 
 st.success(f"✅ Resultados guardados en: {archivo_lote}")
+
+# ============================================================
+# DESCARGA DE ARCHIVOS
+# ============================================================
+st.markdown("### ⬇️ Descargar archivos")
+
+# Descargar lote
+with open(archivo_lote, "rb") as f:
+    st.download_button(
+        label="📥 Descargar CSV del lote",
+        data=f,
+        file_name=f"lote_{timestamp}.csv",
+        mime="text/csv"
+    )
+
+# Descargar acumulado
+if os.path.exists(archivo_maestro):
+    with open(archivo_maestro, "rb") as f:
+        st.download_button(
+            label="📦 Descargar histórico completo",
+            data=f,
+            file_name="todos_lotes.csv",
+            mime="text/csv"
+        )
